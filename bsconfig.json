@@ -1,7 +1,11 @@
 {
   "name" : "sfeir-people-reason",
   "reason" : { "react-jsx" : true },
-  "bs-dependencies": ["reason-react", "reason-js"],
+  "bs-dependencies": [
+    "reason-react",
+    "reason-js",
+    "bs-fetch"
+  ],
   "sources": [
     {
       "dir": "src",

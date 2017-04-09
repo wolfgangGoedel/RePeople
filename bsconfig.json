@@ -9,7 +9,7 @@
   "sources": [
     {
       "dir": "src",
-      "subdirs": []
+      "subdirs": ["components"]
     }
   ]
 }

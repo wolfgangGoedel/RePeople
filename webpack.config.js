@@ -17,5 +17,15 @@ module.exports = {
     new CopyWebpackPlugin([
       { from: './public' }
     ])
-  ]
+  ],
+  module: {
+    rules: [
+      { test: /\.svg$/, use: 'file-loader' },
+      { test: /\.css$/, use: [{ loader: 'style-loader' }, { loader: 'css-loader' }] },
+      { exclude: [/\.html$/, /\.(js|jsx)(\?.*)?$/, /\.css$/, /\.json$/, /\.svg$/], use: 'url-loader' }
+    ]
+  },
+  resolve: {
+    modules: [path.resolve(__dirname, "src"), "node_modules"]
+  }
 };

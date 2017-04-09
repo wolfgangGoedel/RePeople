@@ -1,0 +1,10 @@
+@import url(~materialize-css/bin/materialize.css);
+@import url(~material-design-icons/iconfont/material-icons.css);
+
+body {
+  background-color: #fafafa;
+}
+
+a {
+  color: #337ab7;
+}

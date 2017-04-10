@@ -7,7 +7,14 @@ module App = {
   let render _ =>
     <div className="App">
       <header> <AppBar /> </header>
-      <main> <Card title="Hello Reason" /> </main>
+      <main>
+        <Card>
+          <Card.Title
+            main=(<a href="#">(ReactRe.stringToElement "Hello")</a>)
+            sub=(ReactRe.stringToElement "Reason")
+          />
+        </Card>
+      </main>
     </div>;
 };
 

@@ -1,4 +1,4 @@
-Wp.importUnit "style/app.css";
+Wp.import "style/app.css";
 
 module App = {
   include ReactRe.Component;

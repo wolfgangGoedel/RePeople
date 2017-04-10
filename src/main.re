@@ -1,5 +1,5 @@
-Wp.importUnit "materialize-css";
-Wp.importUnit "style/main.css";
+Wp.import "materialize-css";
+Wp.import "style/main.css";
 
 ReactDOMRe.renderToElementWithId <App /> "main";
 

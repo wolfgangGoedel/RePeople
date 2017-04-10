@@ -1,4 +1,4 @@
-Wp.importUnit "style/appBar.css";
+Wp.import "style/appBar.css";
 
 module AppBar = {
   include ReactRe.Component;

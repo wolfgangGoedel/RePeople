@@ -1,4 +1,4 @@
-Wp.import "materialize-css";
-Wp.import "style/main.css";
+Utils.import "materialize-css";
+Utils.import "style/main.css";
 
 ReactDOMRe.renderToElementWithId <App /> "main";

@@ -1,4 +1,4 @@
-Wp.import "style/card.css";
+Utils.import "style/card.css";
 
 open ReactRe;
 
@@ -23,13 +23,13 @@ module Title = {
       <div> props.main </div>
       <div className="card-subtitle"> props.sub </div>
     </div>;
-  let createElement ::main ::sub=nullElement => ReactPlus.withDefault render {main, sub};
+  let createElement ::main ::sub=nullElement => Utils.withDefault render {main, sub};
 };
 
 module Avatar = {
   type props = {photoUrl: string, altText: string};
   let render {photoUrl, altText} => <img className="card-avatar" src=photoUrl alt=altText />;
-  let createElement ::photoUrl ::altText="" => ReactPlus.withDefault render {photoUrl, altText};
+  let createElement ::photoUrl ::altText="" => Utils.withDefault render {photoUrl, altText};
 };
 
 module Info = {
@@ -39,5 +39,5 @@ module Info = {
       <i className="material-icons" title=desc> (stringToElement icon) </i>
       <span> (listToElement children) </span>
     </div>;
-  let createElement ::icon ::desc=icon ::children => ReactPlus.withDefault render {icon, desc, children} ::children;
+  let createElement ::icon ::desc=icon ::children => Utils.withDefault render {icon, desc, children} ::children;
 };

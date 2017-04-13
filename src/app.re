@@ -1,4 +1,4 @@
-Wp.import "style/app.css";
+Utils.import "style/app.css";
 
 open ReactRe;
 

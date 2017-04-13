@@ -3,30 +3,35 @@ Wp.import "style/app.css";
 open ReactRe;
 
 module App = {
-  include Component;
-  type props = unit;
+  include Component.Stateful;
   let name = "App";
-  let render _ => (
+  type props = unit;
+  type state = {people: Model.people};
+  let getInitialState () => {people: []};
+  let componentDidMount {setState} => {
+    let setPeople p => setState (fun _ => {people: p});
+    Backend.getPeople setPeople;
+    None
+  };
+  let render {state: {people}} => {
+    let person =
+      switch people {
+      | [person, ..._] => Some person
+      | [] => None
+      };
     <div className="App">
       <header> <AppBar /> </header>
       <main>
-        <Card>
-          <Card.Avatar photoUrl="" />
-          <Card.Title
-            main=(<a href="#">(stringToElement "Firstname Lastname")</a>)
-            sub=(stringToElement "Entity")
-          />
-          <Card.Info icon="email">
-            <a href="mailto:lastname@entity.com">(stringToElement "lastname@entity.com")</a>
-          </Card.Info>
-          <Card.Info icon="phone">
-          </Card.Info>
-          <Card.Info icon="supervisor_account" desc="manager">
-          </Card.Info>
-        </Card>
+        (
+          switch person {
+          | Some p =>
+            <PersonCard person=p />
+          | None => ReactRe.nullElement
+          }
+        )
       </main>
     </div>
-  );
+  };
 };
 
 include CreateComponent App;

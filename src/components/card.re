@@ -8,9 +8,7 @@ module Card = {
   let name = "Card";
   let render {props} =>
     <div className="Card card">
-      <div className="card-content">
-        (listToElement props.children)
-      </div>
+      <div className="card-content"> (listToElement props.children) </div>
     </div>;
 };
 
@@ -23,27 +21,23 @@ module Title = {
   let render (props: props) =>
     <div className="card-title">
       <div> props.main </div>
-      <div className="card-subtitle">
-        props.sub
-      </div>
+      <div className="card-subtitle"> props.sub </div>
     </div>;
-  let createElement ::main ::sub=nullElement children::_ () => render {main, sub};
+  let createElement ::main ::sub=nullElement => ReactPlus.withDefault render {main, sub};
 };
 
 module Avatar = {
-  let createElement ::photoUrl ::altText="" children::_ () =>
-    <img className="card-avatar" src=photoUrl alt=altText />;
+  type props = {photoUrl: string, altText: string};
+  let render {photoUrl, altText} => <img className="card-avatar" src=photoUrl alt=altText />;
+  let createElement ::photoUrl ::altText="" => ReactPlus.withDefault render {photoUrl, altText};
 };
 
 module Info = {
-  let createElement ::icon ::desc=icon ::children () => {
+  type props = {icon: string, desc: string, children: list reactElement};
+  let render {icon, desc, children} =>
     <div className="card-info">
-      <i className="material-icons" title=desc>
-        (stringToElement icon)
-      </i>
-      <span>
-        (listToElement children)
-      </span>
-    </div>    
-  }
+      <i className="material-icons" title=desc> (stringToElement icon) </i>
+      <span> (listToElement children) </span>
+    </div>;
+  let createElement ::icon ::desc=icon ::children => ReactPlus.withDefault render {icon, desc, children} ::children;
 };

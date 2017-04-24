@@ -10,7 +10,7 @@ module App = {
   let getInitialState () => {people: []};
   let componentDidMount {setState} => {
     let setPeople p => setState (fun _ => {people: p});
-    Backend.getPeople setPeople;
+    Backend.getPeople () |> Bs_promise.then_ setPeople |> ignore;
     None
   };
   let render {state: {people}} => {

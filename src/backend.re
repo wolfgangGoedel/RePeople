@@ -1,11 +1,4 @@
-external mapP : ('a => 'b) => Js.promise 'b 'f = "then" [@@bs.send.pipe : Js.promise 'a 'e];
-
-external thenP : ('a => Js.promise 'b 'f) => Js.promise 'b 'f =
-  "then" [@@bs.send.pipe : Js.promise 'a 'e];
-
-let getPeople callback =>
+let getPeople () =>
   Bs_fetch.fetch "people.json"
-  |> thenP Bs_fetch.Response.json
-  |> mapP Model.jsonToPeople
-  |> mapP callback
-  |> ignore;
+  |> Bs_promise.andThen Bs_fetch.Response.json
+  |> Bs_promise.then_ Model.jsonToPeople;

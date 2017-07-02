@@ -9,8 +9,8 @@ module App = {
   type state = {people: Model.people};
   let getInitialState () => {people: []};
   let componentDidMount {setState} => {
-    let setPeople p => setState (fun _ => {people: p});
-    Backend.getPeople () |> Bs_promise.then_ setPeople |> ignore;
+    let setPeople p => setState (fun _ => {people: p}) |> Js.Promise.resolve;
+    Backend.getPeople () |> Js.Promise.then_ setPeople |> ignore;
     None
   };
   let render {state: {people}} => {

@@ -1,4 +1,6 @@
 let getPeople () =>
-  Bs_fetch.fetch "people.json"
-  |> Bs_promise.andThen Bs_fetch.Response.json
-  |> Bs_promise.then_ Model.jsonToPeople;
+  Js.Promise.(
+    Bs_fetch.fetch "people.json"
+      |> then_ Bs_fetch.Response.json
+      |> then_ (fun jsonPeople => Model.jsonToPeople jsonPeople |> resolve)
+  );

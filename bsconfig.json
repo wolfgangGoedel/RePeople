@@ -1,6 +1,6 @@
 {
   "name" : "sfeir-people-reason",
-  "reason" : { "react-jsx" : true },
+  "reason" : { "react-jsx" : 2 },
   "bs-dependencies": [
     "reason-react",
     "reason-js",

@@ -1,39 +1,46 @@
 Utils.import "style/app.css";
 
-open ReactRe;
+type state = {people: Model.people};
 
-module App = {
-  include Component.Stateful;
-  let name = "App";
-  type props = unit;
-  type state = {people: Model.people};
-  let getInitialState () => {people: []};
-  let componentDidMount {setState} => {
-    let setPeople p => setState (fun _ => {people: p}) |> Js.Promise.resolve;
-    Backend.getPeople () |> Js.Promise.then_ setPeople |> ignore;
-    None
-  };
-  let render {state: {people}} => {
-    let person =
-      switch people {
-      | [person, ..._] => Some person
-      | [] => None
-      };
-    <div className="App">
-      <header> <AppBar /> </header>
-      <main>
-        (
-          switch person {
-          | Some p =>
-            <PersonCard person=p />
-          | None => ReactRe.nullElement
+let component = ReasonReact.statefulComponent "App";
+
+let make _children => {
+  let updateState _state people => {people: people};
+  let updateHandler people {ReasonReact.state: state} =>
+    ReasonReact.Update (updateState state people);
+  {
+    ...component,
+    initialState: fun () => {people: []},
+    didMount: fun self => {
+      Js.Promise.(
+        Backend.getPeople () |>
+        then_ (
+          fun people => {
+            (self.update updateHandler) people;
+            resolve ()
           }
-        )
-      </main>
-    </div>
-  };
+        ) |> ignore
+      );
+      ReasonReact.NoUpdate
+    },
+    render: fun {state} => {
+      let {people} = state;
+      let person =
+        switch people {
+        | [person, ..._] => Some person
+        | [] => None
+        };
+      <div className="App">
+        <header> <AppBar /> </header>
+        <main>
+          (
+            switch person {
+            | Some p => <PersonCard person=p />
+            | None => ReasonReact.nullElement
+            }
+          )
+        </main>
+      </div>
+    }
+  }
 };
-
-include CreateComponent App;
-
-let createElement = wrapProps ();

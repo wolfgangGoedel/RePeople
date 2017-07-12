@@ -27,9 +27,9 @@
   "dependencies": {
     "material-design-icons": "^3.0.1",
     "materialize-css": "^0.98.1",
-    "react": "^15.5.3",
-    "react-dom": "^15.5.3",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
     "reason-js": "^0.3.0",
-    "reason-react": "^0.1.0"
+    "reason-react": "^0.2.3"
   }
 }

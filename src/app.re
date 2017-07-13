@@ -10,7 +10,7 @@ let make _children => {
     ReasonReact.Update (updateState state people);
   {
     ...component,
-    initialState: fun () => {people: []},
+    initialState: fun () => {people: [||]},
     didMount: fun self => {
       Js.Promise.(
         Backend.getPeople () |>
@@ -25,18 +25,14 @@ let make _children => {
     },
     render: fun {state} => {
       let {people} = state;
-      let person =
-        switch people {
-        | [person, ..._] => Some person
-        | [] => None
-        };
+      
       <div className="App">
         <header> <AppBar /> </header>
         <main>
           (
-            switch person {
-            | Some p => <PersonCard person=p />
-            | None => ReasonReact.nullElement
+            switch (Array.length people) {
+            | 0 => ReasonReact.nullElement
+            | _ => <Discover people />
             }
           )
         </main>

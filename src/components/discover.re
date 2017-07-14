@@ -50,21 +50,19 @@ let make people::people _children => {
 
   let onPauseClick self _ => {
     switch !timerId {
-    | Some id => (fun () => {
+    | Some id => {
         Js.Global.clearInterval id;
         self.ReasonReact.update (pauseUpdater ()) ();
         timerId := None;
-      })();
+      };
     | None => ();
     }
   };
   let onPlayClick self _ => {
-    if (self.ReasonReact.state.isPlaying == false) {
-      timerId := Some (Js.Global.setInterval (onNextClick self) 2000);
-      onNextClick self ();
+    timerId := Some (Js.Global.setInterval (onNextClick self) 2000);
+    onNextClick self ();
 
-      self.ReasonReact.update (playUpdater ()) ();
-    };
+    self.ReasonReact.update (playUpdater ()) ();
   };
 
   {

@@ -16,13 +16,13 @@ let make person::(person: Model.person) _children => {
       </Card.Info>
       (
         switch person.manager {
-          | Some m => (fun m => {
+          | Some m => {
               if (String.length m > 0) {
                 <Card.Info icon="supervisor_account" desc="manager"> (ReasonReact.stringToElement m) </Card.Info>;
               } else {
                 ReasonReact.nullElement;
               };
-            })(m);
+            };
           | None => ReasonReact.nullElement;
         }
       )

@@ -15,7 +15,7 @@ module Fab = {
       <a className=(
           "btn-default btn-floating waves-effect waves-light" ^ (
             switch size {
-            | Some _ => " btn-large"
+            | Some s => " btn-" ^ s
             | None => ""
             }
           )
@@ -48,7 +48,7 @@ let make people::people _children => {
 
   let timerId = ref None;
 
-  let onPauseClick self _ => {
+  let stopTimer self =>
     switch !timerId {
     | Some id => {
         Js.Global.clearInterval id;
@@ -56,7 +56,10 @@ let make people::people _children => {
         timerId := None;
       };
     | None => ();
-    }
+    };
+
+  let onPauseClick self _ => {
+    stopTimer self;
   };
   let onPlayClick self _ => {
     timerId := Some (Js.Global.setInterval (onNextClick self) 2000);
@@ -68,6 +71,9 @@ let make people::people _children => {
   {
     ...component,
     initialState: fun () => {currentPersonId: 0, isPlaying: false},
+    willUnmount: fun self => {
+      stopTimer self;
+    },
     render: fun self => {
       <div className="Discover">
         <div className="card-container">

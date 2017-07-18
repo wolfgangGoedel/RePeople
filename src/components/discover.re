@@ -70,7 +70,7 @@ let make people::people _children => {
 
   {
     ...component,
-    initialState: fun () => {currentPersonId: 0, isPlaying: false},
+    initialState: fun () => {currentPersonId: Random.int (Array.length people), isPlaying: false},
     willUnmount: fun self => {
       stopTimer self;
     },

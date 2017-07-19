@@ -39,7 +39,7 @@ let make people::(people:Model.people) _children => {
                   | false => acc
                   };
                 }) [||]
-              |> Array.map (fun person => <PersonCard person=person />)
+              |> Array.map (fun (person:Model.person) => <PersonCard person=person key=person.id />)
             )
           )
         </div>

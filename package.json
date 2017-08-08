@@ -13,7 +13,7 @@
   "author": "Wolfgang Goedel <wolf.goedel@me.com>",
   "license": "ISC",
   "devDependencies": {
-    "bs-platform": "^1.6.0",
+    "bs-platform": "^1.8.0",
     "bs-promise": "^0.3.1",
     "copy-webpack-plugin": "^4.0.1",
     "css-loader": "^0.28.0",
@@ -25,10 +25,11 @@
     "webpack-dev-server": "^2.4.2"
   },
   "dependencies": {
+    "material-design-icons": "^3.0.1",
     "materialize-css": "^0.98.1",
-    "react": "^15.5.3",
-    "react-dom": "^15.5.3",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
     "reason-js": "^0.3.0",
-    "reason-react": "^0.1.0"
+    "reason-react": "^0.2.3"
   }
 }

@@ -1,4 +1,5 @@
-type person = {
+type people = list person
+and person = {
   id: string,
   firstname: string,
   lastname: string,
@@ -8,8 +9,6 @@ type person = {
   phone: string,
   manager: option string
 };
-
-type people = list person;
 
 let jsonToPeople json => {
   let bindO f =>
@@ -35,5 +34,5 @@ let jsonToPeople json => {
     }
   };
   let decodePerson p => p |> Js.Json.decodeObject |> unwrapUnsafely |> toPerson;
-  json |> Js.Json.decodeArray |> unwrapUnsafely |> Array.map decodePerson |> Array.to_list
+  json |> Js.Json.decodeArray |> unwrapUnsafely |> Array.map decodePerson |> Array.to_list;
 };

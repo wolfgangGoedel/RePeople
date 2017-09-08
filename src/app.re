@@ -4,6 +4,10 @@ type route =
   | DISCOVER
   | LISTALL;
 
+type action =
+  | ToggleShown
+  | PeopleReceived Model.people;
+
 type state = {
   people: Model.people,
   shown: route
@@ -14,42 +18,38 @@ let otherRoute =
   | LISTALL => "Discover"
   | DISCOVER => "Show All";
 
-let peopleUpdater people {ReasonReact.state: state} => ReasonReact.Update {...state, people};
-
-let shownUpdater _ {ReasonReact.state: state} =>
-  ReasonReact.Update {
-    ...state,
-    shown:
-      switch state.shown {
-      | DISCOVER => LISTALL
-      | LISTALL => DISCOVER
-      }
-  };
-
-let onToggleClick self => self.ReasonReact.update shownUpdater;
-
-let component = ReasonReact.statefulComponent "App";
+let component = ReasonReact.reducerComponent "App";
 
 let make _children => {
   ...component,
   initialState: fun () => {people: [||], shown: LISTALL},
+  reducer: fun action state =>
+    switch action {
+    | ToggleShown =>
+      ReasonReact.Update {
+        ...state,
+        shown:
+          switch state.shown {
+          | DISCOVER => LISTALL
+          | LISTALL => DISCOVER
+          }
+      }
+    | PeopleReceived people => ReasonReact.Update {...state, people}
+    },
   didMount: fun self => {
-    Js.Promise.(
-      Backend.getPeople () |>
-      then_ (
-        fun people => {
-          (self.update peopleUpdater) people;
-          resolve ()
-        }
-      ) |> ignore
-    );
+    Backend.getPeople () |>
+    Js.Promise.then_ (
+      fun people => self.reduce (fun _ => PeopleReceived people) () |> Js.Promise.resolve
+    ) |> ignore;
     ReasonReact.NoUpdate
   },
   render: fun self => {
     let {people, shown} = self.state;
     let loaded = Array.length people > 0;
     <div className="App">
-      <header> <AppBar shown=(otherRoute shown) onClick=(onToggleClick self) /> </header>
+      <header>
+        <AppBar shown=(otherRoute shown) onClick=(self.reduce (fun _event => ToggleShown)) />
+      </header>
       <main>
         (
           if loaded {

@@ -37,10 +37,7 @@ let make _children => {
     | PeopleReceived people => ReasonReact.Update {...state, people}
     },
   didMount: fun self => {
-    Backend.getPeople () |>
-    Js.Promise.then_ (
-      fun people => self.reduce (fun _ => PeopleReceived people) () |> Js.Promise.resolve
-    ) |> ignore;
+    Backend.getPeople (self.reduce (fun people => PeopleReceived people));
     ReasonReact.NoUpdate
   },
   render: fun self => {

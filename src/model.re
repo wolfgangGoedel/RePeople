@@ -12,7 +12,8 @@ and person = {
 
 let jsonToPeople json => {
   let toPerson dict => {
-    let decode key => key |> Js_dict.get dict |> Utils.bindO Js.Json.decodeString |> Utils.unwrapUnsafely;
+    let decode key =>
+      key |> Js_dict.get dict |> Utils.bindO Js.Json.decodeString |> Utils.unwrapUnsafely;
     let decodeOpt key => key |> Js_dict.get dict |> Utils.bindO Js.Json.decodeString;
     {
       id: "id" |> decode,
@@ -26,5 +27,5 @@ let jsonToPeople json => {
     }
   };
   let decodePerson p => p |> Js.Json.decodeObject |> Utils.unwrapUnsafely |> toPerson;
-  json |> Js.Json.decodeArray |> Utils.unwrapUnsafely |> Array.map decodePerson;
+  json |> Js.Json.decodeArray |> Utils.unwrapUnsafely |> Array.map decodePerson
 };

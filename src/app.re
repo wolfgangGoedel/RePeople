@@ -1,7 +1,5 @@
 Utils.import "style/app.css";
 
-open ReasonReact;
-
 type route =
   | DISCOVER
   | LISTALL;
@@ -15,6 +13,8 @@ type state = {
   shown: route
 };
 
+let initialState () => {people: [], shown: LISTALL};
+
 let nextRoute =
   fun
   | LISTALL => DISCOVER
@@ -27,40 +27,40 @@ let routeToString =
 
 let reducer action state =>
   switch action {
-  | ToggleShown => Update {...state, shown: nextRoute state.shown}
-  | PeopleReceived people => Update {...state, people}
+  | ToggleShown => ReasonReact.Update {...state, shown: nextRoute state.shown}
+  | PeopleReceived people => ReasonReact.Update {...state, people}
   };
+
+let component = ReasonReact.reducerComponent "App";
 
 let peopleReceived people => PeopleReceived people;
 
 let toggleShown _ => ToggleShown;
 
-let initialState () => {people: [], shown: LISTALL};
-
-let didMount {reduce} => {
-  Backend.getPeople (reduce peopleReceived);
-  NoUpdate
-};
-
-let render {state: {people, shown}, reduce} =>
-  <div className="App">
-    <header>
-      <AppBar shown=(shown |> nextRoute |> routeToString) onClick=(reduce toggleShown) />
-    </header>
-    <main>
-      (
-        switch people {
-        | [] => nullElement
-        | _ =>
-          switch shown {
-          | DISCOVER => <Discover people />
-          | LISTALL => <ListAll people />
+let make _children => {
+  ...component,
+  initialState,
+  reducer,
+  didMount: fun {reduce} => {
+    Backend.getPeople (reduce peopleReceived);
+    NoUpdate
+  },
+  render: fun {state: {people, shown}, reduce} =>
+    <div className="App">
+      <header>
+        <AppBar shown=(shown |> nextRoute |> routeToString) onClick=(reduce toggleShown) />
+      </header>
+      <main>
+        (
+          switch people {
+          | [] => ReasonReact.nullElement
+          | _ =>
+            switch shown {
+            | DISCOVER => <Discover people />
+            | LISTALL => <ListAll people />
+            }
           }
-        }
-      )
-    </main>
-  </div>;
-
-let component = reducerComponent "App";
-
-let make _children => {...component, initialState, reducer, didMount, render};
+        )
+      </main>
+    </div>
+};

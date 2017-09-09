@@ -1,4 +1,4 @@
-type people = array person
+type people = list person
 and person = {
   id: string,
   firstname: string,
@@ -27,5 +27,5 @@ let jsonToPeople json => {
     }
   };
   let decodePerson p => p |> Js.Json.decodeObject |> Utils.unwrapUnsafely |> toPerson;
-  json |> Js.Json.decodeArray |> Utils.unwrapUnsafely |> Array.map decodePerson
+  json |> Js.Json.decodeArray |> Utils.unwrapUnsafely |> Array.map decodePerson |> Array.to_list
 };

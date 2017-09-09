@@ -38,8 +38,8 @@ let make ::people _children => {
   let nextPersonUpdater f => updater Utils.identity f;
   let playUpdater () => updater Utils.truefn Utils.identity;
   let pauseUpdater () => updater Utils.falsefn Utils.identity;
-  let succ n => n == Array.length people - 1 ? 0 : n + 1;
-  let pred n => n == 0 ? Array.length people - 1 : n - 1;
+  let succ n => n == List.length people - 1 ? 0 : n + 1;
+  let pred n => n == 0 ? List.length people - 1 : n - 1;
   let onNextClick self => self.ReasonReact.update (nextPersonUpdater succ);
   let onPrevClick self => self.ReasonReact.update (nextPersonUpdater pred);
   let timerId = ref None;
@@ -59,12 +59,12 @@ let make ::people _children => {
   };
   {
     ...component,
-    initialState: fun () => {currentPersonId: Random.int (Array.length people), isPlaying: false},
+    initialState: fun () => {currentPersonId: Random.int (List.length people), isPlaying: false},
     willUnmount: fun self => stopTimer self,
     render: fun self =>
       <div className="Discover">
         <div className="card-container">
-          <PersonCard person=people.(self.state.currentPersonId) />
+          <PersonCard person=(List.nth people self.state.currentPersonId) />
         </div>
         <div className="fab-container">
           <Fab kind="skip_previous" onClick=(onPrevClick self) />

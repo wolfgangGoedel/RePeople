@@ -17,10 +17,9 @@ let filterPerson pattern => {
   fun (person: Model.person) => Js.Re.test person.firstname re || Js.Re.test person.lastname re
 };
 
-let personCard (person: Model.person) => <PersonCard person key=person.id />;
-
-let personCards people pattern =>
-  Array.to_list people |> List.filter (filterPerson pattern) |> List.map personCard;
+let personCards pattern people =>
+  people |> List.filter (filterPerson pattern) |>
+  List.map (fun (person: Model.person) => <PersonCard person key=person.id />);
 
 let search event => Search (ReactDOMRe.domElementToObj (ReactEventRe.Form.target event))##value;
 
@@ -31,7 +30,7 @@ let make ::people _children => {
   render: fun {state: {filterPattern}, reduce} =>
     <div>
       <div className="card-container">
-        (personCards people filterPattern |> Array.of_list |> ReasonReact.arrayToElement)
+        (people |> personCards filterPattern |> Array.of_list |> ReasonReact.arrayToElement)
       </div>
       <div className="control-container">
         <SearchInput

@@ -35,7 +35,7 @@ let peopleReceived people => PeopleReceived people;
 
 let toggleShown _ => ToggleShown;
 
-let initialState () => {people: [||], shown: LISTALL};
+let initialState () => {people: [], shown: LISTALL};
 
 let didMount {reduce} => {
   Backend.getPeople (reduce peopleReceived);
@@ -49,13 +49,13 @@ let render {state: {people, shown}, reduce} =>
     </header>
     <main>
       (
-        if (Array.length people > 0) {
+        switch people {
+        | [] => nullElement
+        | _ =>
           switch shown {
           | DISCOVER => <Discover people />
           | LISTALL => <ListAll people />
           }
-        } else {
-          nullElement
         }
       )
     </main>

@@ -1,63 +1,45 @@
+type actions =
+  | Search string;
+
 type state = {filterPattern: string};
 
-let component = ReasonReact.statefulComponent "ListAll";
+let initialState () => {filterPattern: ""};
 
-let make people::(people: Model.people) _children => {
-  let updateFilterPattern _state filterPattern => {filterPattern: filterPattern};
-  let filterPatternUpdater filterPattern {ReasonReact.state: state} =>
-    ReasonReact.Update (updateFilterPattern state filterPattern);
-  let onSearchInputChange self event =>
-    self.ReasonReact.update
-      filterPatternUpdater (ReactDOMRe.domElementToObj (ReactEventRe.Form.target event))##value;
-  let rec matchPatternOnValues pattern (values: list string) => {
-    let patternLength = String.length pattern;
-    switch values {
-    | [h, ...r] =>
-      patternLength <= String.length h &&
-      pattern === (String.sub h 0 patternLength |> String.lowercase) ||
-      pattern === "" ?
-        true : matchPatternOnValues pattern r
-    | [] => false
-    }
+let reducer action _state =>
+  switch action {
+  | Search pattern => ReasonReact.Update {filterPattern: pattern}
   };
-  {
-    ...component,
-    initialState: fun () => {filterPattern: ""},
-    render: fun self => {
-      let {filterPattern} = self.state;
-      <div>
-        <div className="card-container">
-          (
-            ReasonReact.arrayToElement (
-              people |>
-              Array.fold_left
-                (
-                  fun acc (person: Model.person) =>
-                    matchPatternOnValues
-                      (String.lowercase filterPattern)
-                      [
-                        person.firstname,
-                        person.lastname,
-                        person.entity,
-                        person.phone,
-                        person.manager |> Utils.unwrap
-                      ] ?
-                      Array.append acc [|person|] : acc
-                )
-                [||] |>
-              Array.map (fun (person: Model.person) => <PersonCard person key=person.id />)
-            )
-          )
-        </div>
-        <div className="control-container">
-          <SearchInput
-            id="searchInput"
-            label="Search"
-            value=filterPattern
-            onChange=(onSearchInputChange self)
-          />
-        </div>
+
+let component = ReasonReact.reducerComponent "ListAll";
+
+let filterPerson pattern => {
+  let re = Js.Re.fromStringWithFlags pattern flags::"i";
+  fun (person: Model.person) => Js.Re.test person.firstname re || Js.Re.test person.lastname re
+};
+
+let personCard (person: Model.person) => <PersonCard person key=person.id />;
+
+let personCards people pattern =>
+  Array.to_list people |> List.filter (filterPerson pattern) |> List.map personCard;
+
+let search event => Search (ReactDOMRe.domElementToObj (ReactEventRe.Form.target event))##value;
+
+let make ::people _children => {
+  ...component,
+  initialState,
+  reducer,
+  render: fun {state: {filterPattern}, reduce} =>
+    <div>
+      <div className="card-container">
+        (personCards people filterPattern |> Array.of_list |> ReasonReact.arrayToElement)
       </div>
-    }
-  }
+      <div className="control-container">
+        <SearchInput
+          id="searchInput"
+          label="Search"
+          value=filterPattern
+          onChange=(reduce search)
+        />
+      </div>
+    </div>
 };

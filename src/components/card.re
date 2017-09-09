@@ -33,20 +33,18 @@ module Avatar = {
 module Info = {
   let component = ReasonReact.statelessComponent "Card.Info";
   let make ::icon ::desc=? children => {
-    ...component,
-    render: fun _self =>
-      <div className="card-info">
-        <i
-          className="material-icons"
-          title=(
-            switch desc {
-            | Some d => d
-            | None => icon
-            }
-          )>
-          (ReasonReact.stringToElement icon)
-        </i>
-        (ReasonReact.createDomElement "span" props::(Js.Obj.empty ()) children)
-      </div>
+    let title =
+      switch desc {
+      | Some d => d
+      | None => icon
+      };
+    {
+      ...component,
+      render: fun _self =>
+        <div className="card-info">
+          <i className="material-icons" title> (ReasonReact.stringToElement icon) </i>
+          (ReasonReact.createDomElement "span" props::(Js.Obj.empty ()) children)
+        </div>
+    }
   };
 };

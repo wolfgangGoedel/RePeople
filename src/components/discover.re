@@ -68,8 +68,7 @@ let stopInterval self => {
 
 let startInterval self => {
   stopInterval self;
-  self.ReasonReact.state.intervalId :=
-    Some (Js.Global.setInterval (self.ReasonReact.reduce showNext) 2000)
+  ReasonReact.(self.state.intervalId := Some (Js.Global.setInterval (self.reduce showNext) 2000))
 };
 
 let reducer nbPeople action state =>

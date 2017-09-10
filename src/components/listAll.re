@@ -14,12 +14,12 @@ let component = ReasonReact.reducerComponent "ListAll";
 
 let filterPerson pattern => {
   let re = Js.Re.fromStringWithFlags pattern flags::"i";
-  fun (person: Model.person) => Js.Re.test person.firstname re || Js.Re.test person.lastname re
+  Model.(fun {firstname, lastname} => Js.Re.test firstname re || Js.Re.test lastname re)
 };
 
 let personCards pattern people =>
   people |> List.filter (filterPerson pattern) |>
-  List.map (fun (person: Model.person) => <PersonCard person key=person.id />);
+  List.map Model.(fun person => <PersonCard person key=person.id />);
 
 let search event => Search (ReactDOMRe.domElementToObj (ReactEventRe.Form.target event))##value;
 

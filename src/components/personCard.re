@@ -1,11 +1,15 @@
 let component = ReasonReact.statelessComponent "PersonCard";
+
 let make person::(person: Model.person) _children => {
   ...component,
   render: fun _self =>
     <Card>
-      <Card.Avatar photoUrl=(person.photoUrl) />
+      <Card.Avatar photoUrl=person.photoUrl />
       <Card.Title
-        main=(<a href="#"> (ReasonReact.stringToElement (person.firstname ^ " " ^ person.lastname)) </a>)
+        main=
+          <a href="#">
+            (ReasonReact.stringToElement (person.firstname ^ " " ^ person.lastname))
+          </a>
         sub=(ReasonReact.stringToElement person.entity)
       />
       <Card.Info icon="email">
@@ -16,9 +20,12 @@ let make person::(person: Model.person) _children => {
       </Card.Info>
       (
         switch person.manager {
-          | Some m => <Card.Info icon="supervisor_account" desc="manager"> (ReasonReact.stringToElement m) </Card.Info>;
-          | None => ReasonReact.nullElement;
+        | Some m =>
+          <Card.Info icon="supervisor_account" desc="manager">
+            (ReasonReact.stringToElement m)
+          </Card.Info>
+        | None => ReasonReact.nullElement
         }
       )
-  </Card>
+    </Card>
 };

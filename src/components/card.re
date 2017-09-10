@@ -1,17 +1,18 @@
 Utils.import "style/card.css";
 
 let component = ReasonReact.statelessComponent "Card";
+
 let make children => {
   ...component,
   render: fun _self =>
     <div className="Card card">
-      (ReasonReact.createDomElement "div" props::{"className":"card-content"} children)
+      (ReasonReact.createDomElement "div" props::{"className": "card-content"} children)
     </div>
 };
 
 module Title = {
-  let component = ReasonReact.statelessComponent "Title";
-  let make main::main sub::sub _children => {
+  let component = ReasonReact.statelessComponent "Card.Title";
+  let make ::main ::sub _children => {
     ...component,
     render: fun _self =>
       <div className="card-title">
@@ -22,23 +23,28 @@ module Title = {
 };
 
 module Avatar = {
-  let component = ReasonReact.statelessComponent "Avatar";
-  let make photoUrl::photoUrl altText::altText="altText" _children => {
+  let component = ReasonReact.statelessComponent "Card.Avatar";
+  let make ::photoUrl ::altText="persons face" _children => {
     ...component,
-    render: fun _self =>
-      <img className="card-avatar" src=photoUrl alt=altText />
+    render: fun _self => <img className="card-avatar" src=photoUrl alt=altText />
   };
 };
 
 module Info = {
-  let component = ReasonReact.statelessComponent "Info";
-  let make icon::icon desc::desc="" children => {
-    ...component,
-    render: fun _self => {
-      <div className="card-info">
-        <i className="material-icons" title=desc> (ReasonReact.stringToElement icon) </i>
-        (ReasonReact.createDomElement "span" props::{"className":""} children)
-      </div>
+  let component = ReasonReact.statelessComponent "Card.Info";
+  let make ::icon ::desc=? children => {
+    let title =
+      switch desc {
+      | Some d => d
+      | None => icon
+      };
+    {
+      ...component,
+      render: fun _self =>
+        <div className="card-info">
+          <i className="material-icons" title> (ReasonReact.stringToElement icon) </i>
+          (ReasonReact.createDomElement "span" props::(Js.Obj.empty ()) children)
+        </div>
     }
   };
 };

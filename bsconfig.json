@@ -1,5 +1,6 @@
 {
   "name" : "sfeir-people-reason",
+  "bsc-flags": ["-bs-super-errors"],
   "reason" : { "react-jsx" : 2 },
   "bs-dependencies": [
     "reason-react",

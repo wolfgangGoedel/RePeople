@@ -13,3 +13,18 @@
 .AppBar-logo {
   height: 40px;
 }
+
+.AppBar a {
+  line-height: 1.5;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+
+.AppBar a:hover {
+  border-bottom-color: white;
+}
+
+.AppBar hr {
+  flex-grow: 1;
+  visibility: hidden;
+}

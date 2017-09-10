@@ -11,17 +11,10 @@ and person = {
 };
 
 let jsonToPeople json => {
-  let bindO f =>
-    fun
-    | Some x => f x
-    | _ => None;
-  let unwrapUnsafely =
-    fun
-    | Some v => v
-    | None => raise (Invalid_argument "unwrapUnsafely called on None");
   let toPerson dict => {
-    let decode key => key |> Js_dict.get dict |> bindO Js.Json.decodeString |> unwrapUnsafely;
-    let decodeOpt key => key |> Js_dict.get dict |> bindO Js.Json.decodeString;
+    let decode key =>
+      key |> Js_dict.get dict |> Utils.bindO Js.Json.decodeString |> Utils.unwrapUnsafely;
+    let decodeOpt key => key |> Js_dict.get dict |> Utils.bindO Js.Json.decodeString;
     {
       id: "id" |> decode,
       firstname: "firstname" |> decode,
@@ -33,6 +26,6 @@ let jsonToPeople json => {
       manager: "manager" |> decodeOpt
     }
   };
-  let decodePerson p => p |> Js.Json.decodeObject |> unwrapUnsafely |> toPerson;
-  json |> Js.Json.decodeArray |> unwrapUnsafely |> Array.map decodePerson |> Array.to_list;
+  let decodePerson p => p |> Js.Json.decodeObject |> Utils.unwrapUnsafely |> toPerson;
+  json |> Js.Json.decodeArray |> Utils.unwrapUnsafely |> Array.map decodePerson |> Array.to_list
 };

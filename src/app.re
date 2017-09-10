@@ -1,46 +1,66 @@
 Utils.import "style/app.css";
 
-type state = {people: Model.people};
+type route =
+  | DISCOVER
+  | LISTALL;
 
-let component = ReasonReact.statefulComponent "App";
+type action =
+  | ToggleShown
+  | PeopleReceived Model.people;
+
+type state = {
+  people: Model.people,
+  shown: route
+};
+
+let initialState () => {people: [], shown: LISTALL};
+
+let nextRoute =
+  fun
+  | LISTALL => DISCOVER
+  | DISCOVER => LISTALL;
+
+let routeToString =
+  fun
+  | LISTALL => "Show All"
+  | DISCOVER => "Discover";
+
+let reducer action state =>
+  switch action {
+  | ToggleShown => ReasonReact.Update {...state, shown: nextRoute state.shown}
+  | PeopleReceived people => ReasonReact.Update {...state, people}
+  };
+
+let component = ReasonReact.reducerComponent "App";
+
+let peopleReceived people => PeopleReceived people;
+
+let toggleShown _ => ToggleShown;
 
 let make _children => {
-  let updateState _state people => {people: people};
-  let updateHandler people {ReasonReact.state: state} =>
-    ReasonReact.Update (updateState state people);
-  {
-    ...component,
-    initialState: fun () => {people: []},
-    didMount: fun self => {
-      Js.Promise.(
-        Backend.getPeople () |>
-        then_ (
-          fun people => {
-            (self.update updateHandler) people;
-            resolve ()
-          }
-        ) |> ignore
-      );
-      ReasonReact.NoUpdate
-    },
-    render: fun {state} => {
-      let {people} = state;
-      let person =
-        switch people {
-        | [person, ..._] => Some person
-        | [] => None
-        };
-      <div className="App">
-        <header> <AppBar /> </header>
-        <main>
-          (
-            switch person {
-            | Some p => <PersonCard person=p />
-            | None => ReasonReact.nullElement
+  ...component,
+  initialState,
+  reducer,
+  didMount: fun {reduce} => {
+    Backend.getPeople (reduce peopleReceived);
+    NoUpdate
+  },
+  render: fun {state: {people, shown}, reduce} =>
+    <div className="App">
+      <header>
+        <AppBar shown=(shown |> nextRoute |> routeToString) onClick=(reduce toggleShown) />
+      </header>
+      <main>
+        (
+          switch people {
+          | [] => ReasonReact.nullElement
+          | _ =>
+            switch shown {
+            | DISCOVER => <Discover people />
+            | LISTALL => <ListAll people />
             }
-          )
-        </main>
-      </div>
-    }
-  }
+          }
+        )
+      </main>
+    </div>
 };

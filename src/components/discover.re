@@ -2,78 +2,108 @@ Utils.import "style/discover.css";
 
 Random.self_init ();
 
-type state = {
-  currentPersonId: int,
-  isPlaying: bool
-};
-
 module Fab = {
   let component = ReasonReact.statelessComponent "Fab";
   let make ::kind ::size=? ::onClick _children => {
-    ...component,
-    render: fun _ =>
-      <a
-        className=(
-          "btn-default btn-floating waves-effect waves-light" ^ (
-            switch size {
-            | Some s => " btn-" ^ s
-            | None => ""
-            }
-          )
-        )
-        onClick>
-        <i className="material-icons"> (ReasonReact.stringToElement kind) </i>
-      </a>
+    let sizeClass =
+      switch size {
+      | Some s => " btn-" ^ s
+      | None => ""
+      };
+    {
+      ...component,
+      render: fun _ =>
+        <a className=("btn-default btn-floating waves-effect waves-light" ^ sizeClass) onClick>
+          <i className="material-icons"> (ReasonReact.stringToElement kind) </i>
+        </a>
+    }
   };
 };
 
-let component = ReasonReact.statefulComponent "Discover";
+type actions =
+  | ShowNext
+  | ShowPrev
+  | Play
+  | Pause;
+
+type state = {
+  currentPersonId: int,
+  isPlaying: bool,
+  intervalId: ref (option Js.Global.intervalId)
+};
+
+let initialState nbPeople () => {
+  currentPersonId: Random.int nbPeople + 1,
+  isPlaying: false,
+  intervalId: ref None
+};
+
+let showNext _ => ShowNext;
+
+let showPrev _ => ShowPrev;
+
+let play _ => Play;
+
+let pause _ => Pause;
+
+let succ max n => n >= max ? 1 : n + 1;
+
+let pred max n => n <= 1 ? max : n - 1;
+
+let setNext nbPeople state => {...state, currentPersonId: succ nbPeople state.currentPersonId};
+
+let setPrev nbPeople state => {...state, currentPersonId: pred nbPeople state.currentPersonId};
+
+let setPlaying isPlaying state => {...state, isPlaying};
+
+let stopInterval self => {
+  let state = self.ReasonReact.state;
+  switch !state.intervalId {
+  | Some iid =>
+    Js.Global.clearInterval iid;
+    state.intervalId := None
+  | None => ()
+  }
+};
+
+let startInterval self => {
+  stopInterval self;
+  self.ReasonReact.state.intervalId :=
+    Some (Js.Global.setInterval (self.ReasonReact.reduce showNext) 2000)
+};
+
+let reducer nbPeople action state =>
+  switch action {
+  | ShowNext => ReasonReact.Update (state |> setNext nbPeople)
+  | ShowPrev => ReasonReact.Update (state |> setPrev nbPeople)
+  | Play =>
+    ReasonReact.UpdateWithSideEffects (state |> setNext nbPeople |> setPlaying true) startInterval
+  | Pause => ReasonReact.UpdateWithSideEffects (state |> setPlaying false) stopInterval
+  };
+
+let component = ReasonReact.reducerComponent "Discover";
 
 let make ::people _children => {
-  let updater isPlayingUpdater nextPersonId _ {ReasonReact.state: state} =>
-    ReasonReact.Update {
-      isPlaying: isPlayingUpdater state.isPlaying,
-      currentPersonId: nextPersonId state.currentPersonId
-    };
-  let nextPersonUpdater f => updater Utils.identity f;
-  let playUpdater () => updater Utils.truefn Utils.identity;
-  let pauseUpdater () => updater Utils.falsefn Utils.identity;
-  let succ n => n == List.length people - 1 ? 0 : n + 1;
-  let pred n => n == 0 ? List.length people - 1 : n - 1;
-  let onNextClick self => self.ReasonReact.update (nextPersonUpdater succ);
-  let onPrevClick self => self.ReasonReact.update (nextPersonUpdater pred);
-  let timerId = ref None;
-  let stopTimer self =>
-    switch !timerId {
-    | Some id =>
-      Js.Global.clearInterval id;
-      self.ReasonReact.update (pauseUpdater ()) ();
-      timerId := None
-    | None => ()
-    };
-  let onPauseClick self _ => stopTimer self;
-  let onPlayClick self _ => {
-    timerId := Some (Js.Global.setInterval (onNextClick self) 2000);
-    onNextClick self ();
-    self.ReasonReact.update (playUpdater ()) ()
-  };
+  let aPeople = Array.of_list people;
+  let nbPeople = Array.length aPeople;
   {
     ...component,
-    initialState: fun () => {currentPersonId: Random.int (List.length people), isPlaying: false},
-    willUnmount: fun self => stopTimer self,
-    render: fun self =>
+    initialState: initialState nbPeople,
+    reducer: reducer nbPeople,
+    willUnmount: stopInterval,
+    render: fun {state, reduce} =>
       <div className="Discover">
         <div className="card-container">
-          <PersonCard person=(List.nth people self.state.currentPersonId) />
+          <PersonCard person=aPeople.(state.currentPersonId - 1) />
         </div>
         <div className="fab-container">
-          <Fab kind="skip_previous" onClick=(onPrevClick self) />
+          <Fab kind="skip_previous" onClick=(reduce showPrev) />
           (
-            self.state.isPlaying ?
-              <Fab kind="pause" size="large" onClick=(onPauseClick self) /> :
-              <Fab kind="play_arrow" size="large" onClick=(onPlayClick self) />
+            state.isPlaying ?
+              <Fab kind="pause" size="large" onClick=(reduce pause) /> :
+              <Fab kind="play_arrow" size="large" onClick=(reduce play) />
           )
-          <Fab kind="skip_next" onClick=(onNextClick self) />
+          <Fab kind="skip_next" onClick=(reduce showNext) />
         </div>
       </div>
   }

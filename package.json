@@ -1,37 +1,26 @@
 {
   "name": "sfeir-people-reason",
-  "version": "1.0.0",
-  "description": "",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "bsb -make-world -w",
-    "serve": "webpack-dev-server",
-    "build": "webpack",
-    "clean": "bsb -clean-world"
-  },
-  "keywords": [],
+  "version": "0.3.0",
+  "private": true,
+  "description": "Reason-React version of SfeirPeople",
   "author": "Wolfgang Goedel <wolf.goedel@me.com>",
-  "license": "ISC",
-  "devDependencies": {
-    "bs-fetch": "^0.1.1",
-    "bs-json": "^0.2.1",
-    "bs-platform": "^1.8.0",
-    "bs-promise": "^0.3.1",
-    "copy-webpack-plugin": "^4.0.1",
-    "css-loader": "^0.28.0",
-    "file-loader": "^0.11.1",
-    "html-webpack-plugin": "^2.28.0",
-    "style-loader": "^0.16.1",
-    "url-loader": "^0.5.8",
-    "webpack": "^2.3.3",
-    "webpack-dev-server": "^2.4.2"
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "prepare": "npm link bs-platform"
   },
   "dependencies": {
     "material-design-icons": "^3.0.1",
     "materialize-css": "^0.98.1",
-    "react": "^15.6.1",
-    "react-dom": "^15.6.1",
-    "reason-js": "^0.3.0",
-    "reason-react": "^0.2.3"
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0",
+    "reason-react": "^0.2.4"
+  },
+  "devDependencies": {
+    "bs-fetch": "^0.1.1",
+    "bs-json": "^0.2.1",
+    "reason-scripts": "0.6.11"
   }
 }

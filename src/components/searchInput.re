@@ -1,4 +1,4 @@
-Utils.import "style/searchInput.css";
+Utils.import "../style/searchInput.css";
 
 let component = ReasonReact.statelessComponent "SearchInput";
 

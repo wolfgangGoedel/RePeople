@@ -1,6 +1,6 @@
-Utils.import "style/appBar.css";
+Utils.import "../style/appBar.css";
 
-let logo = Utils.importString "assets/appBar.logo.svg";
+let logo = Utils.importString "../assets/appBar.logo.svg";
 
 let component = ReasonReact.statelessComponent "AppBar";
 

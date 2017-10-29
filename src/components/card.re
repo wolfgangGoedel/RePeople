@@ -1,4 +1,4 @@
-Utils.import "style/card.css";
+Utils.import "../style/card.css";
 
 let component = ReasonReact.statelessComponent "Card";
 

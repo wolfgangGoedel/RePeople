@@ -1,4 +1,4 @@
-Utils.import "style/app.css";
+Utils.import "./style/app.css";
 
 type route =
   | DISCOVER

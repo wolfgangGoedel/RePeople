@@ -1,4 +1,4 @@
-Utils.import "style/discover.css";
+Utils.import "../style/discover.css";
 
 Random.self_init ();
 

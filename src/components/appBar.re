@@ -1,6 +1,6 @@
-Utils.import("../style/appBar.css");
+WebPack.require("./appBar.css");
 
-let logo = Utils.importString("../assets/appBar.logo.svg");
+let logo = WebPack.requireImage("./appBar.logo.svg");
 
 let component = ReasonReact.statelessComponent("AppBar");
 

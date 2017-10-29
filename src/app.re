@@ -1,4 +1,4 @@
-Utils.import("./style/app.css");
+WebPack.require("./app.css");
 
 type route =
   | DISCOVER

@@ -1,4 +1,4 @@
-Utils.import("../style/searchInput.css");
+WebPack.require("./searchInput.css");
 
 let component = ReasonReact.statelessComponent("SearchInput");
 

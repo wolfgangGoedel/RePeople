@@ -3,7 +3,7 @@
   "sources": [
     {
       "dir": "src",
-      "subdirs": ["components"]
+      "subdirs": true
     }
   ],
   "bsc-flags": [

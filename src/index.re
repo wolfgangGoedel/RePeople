@@ -1,5 +1,5 @@
-Utils.import("materialize-css");
+WebPack.require("materialize-css");
 
-Utils.import("./style/main.css");
+WebPack.require("./index.css");
 
 ReactDOMRe.renderToElementWithId(<App />, "main");

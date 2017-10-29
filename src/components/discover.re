@@ -1,4 +1,4 @@
-Utils.import("../style/discover.css");
+WebPack.require("./discover.css");
 
 Random.self_init();
 

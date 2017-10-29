@@ -1,4 +1,4 @@
-Utils.import("../style/card.css");
+WebPack.require("./card.css");
 
 let component = ReasonReact.statelessComponent("Card");
 

@@ -1,4 +1,4 @@
-Utils.import "./style/app.css";
+Utils.import("./style/app.css");
 
 type route =
   | DISCOVER
@@ -6,14 +6,14 @@ type route =
 
 type action =
   | ToggleShown
-  | PeopleReceived Model.people;
+  | PeopleReceived(Model.people);
 
 type state = {
   people: Model.people,
   shown: route
 };
 
-let initialState () => {people: [], shown: LISTALL};
+let initialState = () => {people: [], shown: LISTALL};
 
 let nextRoute =
   fun
@@ -25,30 +25,30 @@ let routeToString =
   | LISTALL => "Show All"
   | DISCOVER => "Discover";
 
-let reducer action state =>
+let reducer = (action, state) =>
   switch action {
-  | ToggleShown => ReasonReact.Update {...state, shown: nextRoute state.shown}
-  | PeopleReceived people => ReasonReact.Update {...state, people}
+  | ToggleShown => ReasonReact.Update({...state, shown: nextRoute(state.shown)})
+  | PeopleReceived(people) => ReasonReact.Update({...state, people})
   };
 
-let component = ReasonReact.reducerComponent "App";
+let component = ReasonReact.reducerComponent("App");
 
-let peopleReceived people => PeopleReceived people;
+let peopleReceived = (people) => PeopleReceived(people);
 
-let toggleShown _ => ToggleShown;
+let toggleShown = (_) => ToggleShown;
 
-let make _children => {
+let make = (_children) => {
   ...component,
   initialState,
   reducer,
-  didMount: fun {reduce} => {
-    Backend.getPeople (reduce peopleReceived);
+  didMount: ({reduce}) => {
+    Backend.getPeople(reduce(peopleReceived));
     NoUpdate
   },
-  render: fun {state: {people, shown}, reduce} =>
+  render: ({state: {people, shown}, reduce}) =>
     <div className="App">
       <header>
-        <AppBar shown=(shown |> nextRoute |> routeToString) onClick=(reduce toggleShown) />
+        <AppBar shown=(shown |> nextRoute |> routeToString) onClick=(reduce(toggleShown)) />
       </header>
       <main>
         (

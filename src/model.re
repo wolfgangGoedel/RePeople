@@ -6,7 +6,7 @@ type person = {
   entity: string,
   email: string,
   phone: string,
-  manager: option string
+  manager: option(string)
 };
 
-type people = list person;
+type people = list(person);

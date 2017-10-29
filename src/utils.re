@@ -1,3 +1,3 @@
-external import : string => unit = "require" [@@bs.val];
+[@bs.val] external import : string => unit = "require";
 
-external importString : string => string = "require" [@@bs.val];
+[@bs.val] external importString : string => string = "require";

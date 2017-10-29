@@ -16,5 +16,6 @@
   ],
   "reason" : {
     "react-jsx": 2
-  }
+  },
+  "refmt": 3
 }

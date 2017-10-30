@@ -5,15 +5,15 @@ type route =
   | LISTALL;
 
 type action =
-  | ToggleShown
+  | ToggleRoute
   | PeopleReceived(Model.people);
 
 type state = {
   people: Model.people,
-  shown: route
+  route
 };
 
-let initialState = () => {people: [], shown: LISTALL};
+let initialState = () => {people: [], route: LISTALL};
 
 let nextRoute =
   fun
@@ -27,7 +27,7 @@ let routeToString =
 
 let reducer = (action, state) =>
   switch action {
-  | ToggleShown => ReasonReact.Update({...state, shown: nextRoute(state.shown)})
+  | ToggleRoute => ReasonReact.Update({...state, route: state.route |> nextRoute})
   | PeopleReceived(people) => ReasonReact.Update({...state, people})
   };
 
@@ -35,27 +35,27 @@ let component = ReasonReact.reducerComponent("App");
 
 let peopleReceived = (people) => PeopleReceived(people);
 
-let toggleShown = (_) => ToggleShown;
+let toggleRoute = (_) => ToggleRoute;
 
 let make = (_children) => {
   ...component,
   initialState,
   reducer,
   didMount: ({reduce}) => {
-    Backend.getPeople(reduce(peopleReceived));
+    Backend.getPeople(peopleReceived |> reduce);
     NoUpdate
   },
-  render: ({state: {people, shown}, reduce}) =>
+  render: ({state: {people, route}, reduce}) =>
     <div className="App">
       <header>
-        <AppBar shown=(shown |> nextRoute |> routeToString) onClick=(reduce(toggleShown)) />
+        <AppBar shown=(route |> nextRoute |> routeToString) onClick=(toggleRoute |> reduce) />
       </header>
       <main>
         (
           switch people {
           | [] => ReasonReact.nullElement
           | _ =>
-            switch shown {
+            switch route {
             | DISCOVER => <Discover people />
             | LISTALL => <ListAll people />
             }

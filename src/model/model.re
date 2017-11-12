@@ -14,14 +14,14 @@ type people = list(person);
 module Decode = {
   open Json.Decode;
   let person = (json) => {
-    id: field("id", string) @@ json,
-    firstname: field("firstname", string) @@ json,
-    lastname: field("lastname", string) @@ json,
-    photoUrl: field("photo", string) @@ json,
-    entity: field("entity", string) @@ json,
-    email: field("email", string) @@ json,
-    phone: field("phone", string) @@ json,
-    manager: optional(field("entity", string)) @@ json
+    id: json |> field("id", string),
+    firstname: json |> field("firstname", string),
+    lastname: json |> field("lastname", string),
+    photoUrl: json |> field("photo", string),
+    entity: json |> field("entity", string),
+    email: json |> field("email", string),
+    phone: json |> field("phone", string),
+    manager: json |> optional(field("entity", string))
   };
-  let people = (json) => list(person) @@ json;
+  let people = (json) => json |> list(person);
 };

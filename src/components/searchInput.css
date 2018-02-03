@@ -12,7 +12,9 @@
   font-weight: 300;
 }
 
-.SearchInput.input-field input[type='text']:focus + label {
+.SearchInput.input-field
+  > input[type='text']:not(.browser-default):focus:not([readonly])
+  + label {
   color: #0168ab;
 }
 
@@ -20,7 +22,8 @@
   color: #0168ab;
 }
 
-.SearchInput.input-field input[type='text']:focus {
+.SearchInput.input-field
+  > input[type='text']:not(.browser-default):focus:not([readonly]) {
   border-bottom: 1px solid #0168ab;
   box-shadow: 0 1px 0 0 #0168ab;
 }

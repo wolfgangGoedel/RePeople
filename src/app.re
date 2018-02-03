@@ -5,7 +5,7 @@ type route =
   | LISTALL;
 
 type action =
-  | ToggleRoute
+  | Show(route)
   | PeopleReceived(Model.people);
 
 type state = {
@@ -13,25 +13,40 @@ type state = {
   route
 };
 
-let initialState = () => {people: [], route: LISTALL};
-
-let nextRoute =
-  fun
-  | LISTALL => DISCOVER
-  | DISCOVER => LISTALL;
-
-let routeToString =
-  fun
-  | LISTALL => "Show All"
-  | DISCOVER => "Discover";
+let initialState = () => {
+  let url = ReasonReact.Router.dangerouslyGetInitialUrl();
+  {
+    people: [],
+    route:
+      switch url.path {
+      | ["discover"] => DISCOVER
+      | _ => LISTALL
+      }
+  }
+};
 
 let reducer = (action, state) =>
   ReasonReact.(
     switch action {
-    | ToggleRoute => Update({...state, route: state.route |> nextRoute})
+    | Show(route) => Update({...state, route})
     | PeopleReceived(people) => Update({...state, people})
     }
   );
+
+let subscriptions = ({ReasonReact.send}) => [
+  ReasonReact.Sub(
+    () =>
+      ReasonReact.Router.watchUrl(
+        (url) =>
+          switch url.path {
+          | ["all"] => send(Show(LISTALL))
+          | ["discover"] => send(Show(DISCOVER))
+          | _ => ReasonReact.Router.push("all")
+          }
+      ),
+    ReasonReact.Router.unwatchUrl
+  )
+];
 
 let component = ReasonReact.reducerComponent("App");
 
@@ -39,15 +54,20 @@ let make = (_children) => {
   ...component,
   initialState,
   reducer,
+  subscriptions,
   didMount: ({send}) => {
     Backend.getPeople((people) => send(PeopleReceived(people)));
+    let url = ReasonReact.Router.dangerouslyGetInitialUrl();
+    switch url.path {
+    | ["all"]
+    | ["discover"] => ()
+    | _ => ReasonReact.Router.push("all")
+    };
     NoUpdate
   },
-  render: ({state: {people, route}, send}) =>
+  render: ({state: {people, route}}) =>
     <div className="App">
-      <header>
-        <AppBar shown=(route |> nextRoute |> routeToString) onClick=((_) => send(ToggleRoute)) />
-      </header>
+      <header> <AppBar /> </header>
       <main>
         (
           switch people {

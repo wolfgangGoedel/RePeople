@@ -25,6 +25,10 @@
 }
 
 .AppBar hr {
-  flex-grow: 1;
   visibility: hidden;
+  min-width: 1rem;
+}
+
+.AppBar .grow {
+  flex-grow: 1;
 }

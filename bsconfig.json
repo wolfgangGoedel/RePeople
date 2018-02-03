@@ -1,20 +1,14 @@
 {
-  "name" : "sfeir-people-reason",
+  "name": "sfeir-people-reason",
   "sources": [
     {
       "dir": "src",
       "subdirs": true
     }
   ],
-  "bsc-flags": [
-    "-bs-super-errors"
-  ],
-  "bs-dependencies": [
-    "reason-react",
-    "bs-fetch",
-    "bs-json"
-  ],
-  "reason" : {
+  "bsc-flags": ["-bs-super-errors"],
+  "bs-dependencies": ["reason-react", "bs-fetch", "@glennsl/bs-json"],
+  "reason": {
     "react-jsx": 2
   },
   "refmt": 3

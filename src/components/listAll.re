@@ -1,3 +1,5 @@
+open Model;
+
 type actions =
   | Search(string);
 
@@ -13,22 +15,23 @@ let reducer = (action, _state) =>
 let component = ReasonReact.reducerComponent("ListAll");
 
 let filterPerson = (pattern) => {
-  let re = Js.Re.fromStringWithFlags(pattern, ~flags="i");
-  Model.(({firstname, lastname}) => Js.Re.test(firstname, re) || Js.Re.test(lastname, re))
+  open Js.Re;
+  let re = fromStringWithFlags(pattern, ~flags="i");
+  ({firstname, lastname}) => test(firstname, re) || test(lastname, re)
 };
 
 let personCards = (pattern, people) =>
   people
   |> List.filter(filterPerson(pattern))
-  |> List.map(Model.((person) => <PersonCard person key=person.id />));
+  |> List.map((person) => <PersonCard person key=person.id />);
 
-let search = (event) => Search(ReactDOMRe.domElementToObj(ReactEventRe.Form.target(event))##value);
+let getValue = (event) => (event |> ReactEventRe.Form.target |> ReactDOMRe.domElementToObj)##value;
 
 let make = (~people, _children) => {
   ...component,
   initialState,
   reducer,
-  render: ({state: {filterPattern}, reduce}) =>
+  render: ({state: {filterPattern}, send}) =>
     <div>
       <div className="card-container">
         (people |> personCards(filterPattern) |> Array.of_list |> ReasonReact.arrayToElement)
@@ -38,7 +41,7 @@ let make = (~people, _children) => {
           id="searchInput"
           label="Search"
           value=filterPattern
-          onChange=(reduce(search))
+          onChange=((event) => send(Search(event |> getValue)))
         />
       </div>
     </div>

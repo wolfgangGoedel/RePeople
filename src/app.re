@@ -26,29 +26,27 @@ let routeToString =
   | DISCOVER => "Discover";
 
 let reducer = (action, state) =>
-  switch action {
-  | ToggleRoute => ReasonReact.Update({...state, route: state.route |> nextRoute})
-  | PeopleReceived(people) => ReasonReact.Update({...state, people})
-  };
+  ReasonReact.(
+    switch action {
+    | ToggleRoute => Update({...state, route: state.route |> nextRoute})
+    | PeopleReceived(people) => Update({...state, people})
+    }
+  );
 
 let component = ReasonReact.reducerComponent("App");
-
-let peopleReceived = (people) => PeopleReceived(people);
-
-let toggleRoute = (_) => ToggleRoute;
 
 let make = (_children) => {
   ...component,
   initialState,
   reducer,
-  didMount: ({reduce}) => {
-    Backend.getPeople(peopleReceived |> reduce);
+  didMount: ({send}) => {
+    Backend.getPeople((people) => send(PeopleReceived(people)));
     NoUpdate
   },
-  render: ({state: {people, route}, reduce}) =>
+  render: ({state: {people, route}, send}) =>
     <div className="App">
       <header>
-        <AppBar shown=(route |> nextRoute |> routeToString) onClick=(toggleRoute |> reduce) />
+        <AppBar shown=(route |> nextRoute |> routeToString) onClick=((_) => send(ToggleRoute)) />
       </header>
       <main>
         (

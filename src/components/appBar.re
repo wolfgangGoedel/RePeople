@@ -4,9 +4,9 @@ let logo = WebPack.requireImage("./appBar.logo.svg");
 
 let component = ReasonReact.statelessComponent("AppBar");
 
-let make = (_children) => {
+let make = _children => {
   ...component,
-  render: (_self) =>
+  render: _self =>
     <nav className="AppBar">
       <img className="AppBar-logo" src=logo alt="People" />
       <hr className="grow" />

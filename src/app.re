@@ -22,7 +22,7 @@ let initialState = () => {
       | ["discover"] => DISCOVER
       | _ => LISTALL
       }
-  }
+  };
 };
 
 let reducer = (action, state) =>
@@ -36,13 +36,12 @@ let reducer = (action, state) =>
 let subscriptions = ({ReasonReact.send}) => [
   ReasonReact.Sub(
     () =>
-      ReasonReact.Router.watchUrl(
-        (url) =>
-          switch url.path {
-          | ["all"] => send(Show(LISTALL))
-          | ["discover"] => send(Show(DISCOVER))
-          | _ => ReasonReact.Router.push("all")
-          }
+      ReasonReact.Router.watchUrl(url =>
+        switch url.path {
+        | ["all"] => send(Show(LISTALL))
+        | ["discover"] => send(Show(DISCOVER))
+        | _ => ReasonReact.Router.push("all")
+        }
       ),
     ReasonReact.Router.unwatchUrl
   )
@@ -50,20 +49,20 @@ let subscriptions = ({ReasonReact.send}) => [
 
 let component = ReasonReact.reducerComponent("App");
 
-let make = (_children) => {
+let make = _children => {
   ...component,
   initialState,
   reducer,
   subscriptions,
   didMount: ({send}) => {
-    Backend.getPeople((people) => send(PeopleReceived(people)));
+    Backend.getPeople(people => send(PeopleReceived(people)));
     let url = ReasonReact.Router.dangerouslyGetInitialUrl();
     switch url.path {
     | ["all"]
     | ["discover"] => ()
     | _ => ReasonReact.Router.push("all")
     };
-    NoUpdate
+    NoUpdate;
   },
   render: ({state: {people, route}}) =>
     <div className="App">

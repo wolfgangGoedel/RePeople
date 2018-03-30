@@ -2,21 +2,29 @@ let component = ReasonReact.statelessComponent("PersonCard");
 
 let make = (~person: Model.person, _children) => {
   ...component,
-  render: (_self) =>
+  render: _self =>
     <Card>
       <Card.Avatar photoUrl=person.photoUrl />
       <Card.Title
         main=
           <a href="#">
-            (ReasonReact.stringToElement(person.firstname ++ (" " ++ person.lastname)))
+            (
+              ReasonReact.stringToElement(
+                person.firstname ++ " " ++ person.lastname
+              )
+            )
           </a>
         sub=(ReasonReact.stringToElement(person.entity))
       />
       <Card.Info icon="email">
-        <a href=("mailto:" ++ person.email)> (ReasonReact.stringToElement(person.email)) </a>
+        <a href=("mailto:" ++ person.email)>
+          (ReasonReact.stringToElement(person.email))
+        </a>
       </Card.Info>
       <Card.Info icon="phone">
-        <a href=("tel:" ++ person.phone)> (ReasonReact.stringToElement(person.phone)) </a>
+        <a href=("tel:" ++ person.phone)>
+          (ReasonReact.stringToElement(person.phone))
+        </a>
       </Card.Info>
       (
         switch person.manager {

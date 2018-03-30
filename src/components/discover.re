@@ -11,10 +11,16 @@ module Fab = {
     {
       ...component,
       render: (_) =>
-        <a className=("btn-default btn-floating waves-effect waves-light" ++ sizeClass) onClick>
-          <i className="material-icons"> (ReasonReact.stringToElement(kind)) </i>
+        <a
+          className=(
+            "btn-default btn-floating waves-effect waves-light" ++ sizeClass
+          )
+          onClick>
+          <i className="material-icons">
+            (ReasonReact.stringToElement(kind))
+          </i>
         </a>
-    }
+    };
   };
 };
 
@@ -30,7 +36,11 @@ type state = {
   intervalId: ref(option(Js.Global.intervalId))
 };
 
-let initialState = () => {currentPersonId: 1, isPlaying: false, intervalId: ref(None)};
+let initialState = () => {
+  currentPersonId: 1,
+  isPlaying: false,
+  intervalId: ref(None)
+};
 
 let succ = (max, n) => n >= max ? 1 : n + 1;
 
@@ -52,13 +62,13 @@ let stopInterval = ({ReasonReact.state}) =>
   switch state.intervalId^ {
   | Some(iid) =>
     Js.Global.clearInterval(iid);
-    state.intervalId := None
+    state.intervalId := None;
   | None => ()
   };
 
 let startInterval = ({ReasonReact.state, send} as self) => {
   stopInterval(self);
-  state.intervalId := Some(Js.Global.setInterval(() => send(ShowNext), 2000))
+  state.intervalId := Some(Js.Global.setInterval(() => send(ShowNext), 2000));
 };
 
 let reducer = (nbPeople, action, state) =>
@@ -66,7 +76,11 @@ let reducer = (nbPeople, action, state) =>
     switch action {
     | ShowNext => Update(state |> setNext(nbPeople))
     | ShowPrev => Update(state |> setPrev(nbPeople))
-    | Play => UpdateWithSideEffects(state |> setNext(nbPeople) |> setPlaying(true), startInterval)
+    | Play =>
+      UpdateWithSideEffects(
+        state |> setNext(nbPeople) |> setPlaying(true),
+        startInterval
+      )
     | Pause => UpdateWithSideEffects(state |> setPlaying(false), stopInterval)
     }
   );
@@ -87,14 +101,14 @@ let make = (~people, _children) => {
           <PersonCard person=aPeople[state.currentPersonId - 1] />
         </div>
         <div className="fab-container">
-          <Fab kind="skip_previous" onClick=((_) => send(ShowPrev)) />
+          <Fab kind="skip_previous" onClick=(__ => send(ShowPrev)) />
           (
             state.isPlaying ?
-              <Fab kind="pause" size="large" onClick=((_) => send(Pause)) /> :
-              <Fab kind="play_arrow" size="large" onClick=((_) => send(Play)) />
+              <Fab kind="pause" size="large" onClick=(__ => send(Pause)) /> :
+              <Fab kind="play_arrow" size="large" onClick=(__ => send(Play)) />
           )
-          <Fab kind="skip_next" onClick=((_) => send(ShowNext)) />
+          <Fab kind="skip_next" onClick=(__ => send(ShowNext)) />
         </div>
       </div>
-  }
+  };
 };

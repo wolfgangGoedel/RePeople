@@ -2,7 +2,15 @@ WebPack.require("./app.css");
 
 type route =
   | DISCOVER
-  | LISTALL;
+  | LISTALL
+  | UNKNOWN;
+
+let matchRoute = (url: ReasonReact.Router.url) =>
+  switch url.path {
+  | ["discover"] => DISCOVER
+  | ["all"] => LISTALL
+  | _ => UNKNOWN
+  };
 
 type action =
   | Show(route)
@@ -14,15 +22,8 @@ type state = {
 };
 
 let initialState = () => {
-  let url = ReasonReact.Router.dangerouslyGetInitialUrl();
-  {
-    people: [],
-    route:
-      switch url.path {
-      | ["discover"] => DISCOVER
-      | _ => LISTALL
-      }
-  };
+  people: [],
+  route: ReasonReact.Router.dangerouslyGetInitialUrl() |> matchRoute
 };
 
 let reducer = (action, state) =>
@@ -33,19 +34,29 @@ let reducer = (action, state) =>
     }
   );
 
-let subscriptions = ({ReasonReact.send}) => [
-  ReasonReact.Sub(
-    () =>
-      ReasonReact.Router.watchUrl(url =>
-        switch url.path {
-        | ["all"] => send(Show(LISTALL))
-        | ["discover"] => send(Show(DISCOVER))
-        | _ => ReasonReact.Router.push("all")
-        }
-      ),
-    ReasonReact.Router.unwatchUrl
-  )
-];
+let subscriptions =
+  ReasonReact.(
+    ({send}) => [
+      Sub(
+        () =>
+          Router.watchUrl(url =>
+            url |> matchRoute |> (route => Show(route) |> send)
+          ),
+        Router.unwatchUrl
+      )
+    ]
+  );
+
+module Redirect {
+  let component = ReasonReact.statelessComponent("Redirect");
+  let make = (~toPath, _children) => {
+    ...component,
+    didMount: _ => {
+      ReasonReact.Router.push(toPath);
+      NoUpdate;
+    }
+  }
+};
 
 let component = ReasonReact.reducerComponent("App");
 
@@ -56,12 +67,6 @@ let make = _children => {
   subscriptions,
   didMount: ({send}) => {
     Backend.getPeople(people => send(PeopleReceived(people)));
-    let url = ReasonReact.Router.dangerouslyGetInitialUrl();
-    switch url.path {
-    | ["all"]
-    | ["discover"] => ()
-    | _ => ReasonReact.Router.push("all")
-    };
     NoUpdate;
   },
   render: ({state: {people, route}}) =>
@@ -75,6 +80,7 @@ let make = _children => {
             switch route {
             | DISCOVER => <Discover people />
             | LISTALL => <ListAll people />
+            | UNKNOWN => <Redirect toPath="/all" />
             }
           }
         )
